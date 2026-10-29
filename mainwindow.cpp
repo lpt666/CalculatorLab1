@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include <QKeyEvent>
 #include <QPushButton>
 #include <cmath>
 
@@ -16,6 +17,43 @@ MainWindow::MainWindow(QWidget *parent)
 MainWindow::~MainWindow()
 {
     delete ui;
+}
+
+void MainWindow::keyPressEvent(QKeyEvent *event)
+{
+    QPushButton *button = nullptr;
+    switch (event->key()) {
+    case Qt::Key_0: button = ui->button0; break;
+    case Qt::Key_1: button = ui->button1; break;
+    case Qt::Key_2: button = ui->button2; break;
+    case Qt::Key_3: button = ui->button3; break;
+    case Qt::Key_4: button = ui->button4; break;
+    case Qt::Key_5: button = ui->button5; break;
+    case Qt::Key_6: button = ui->button6; break;
+    case Qt::Key_7: button = ui->button7; break;
+    case Qt::Key_8: button = ui->button8; break;
+    case Qt::Key_9: button = ui->button9; break;
+    case Qt::Key_Period:
+    case Qt::Key_Comma: button = ui->buttonDecimal; break;
+    case Qt::Key_Plus: button = ui->buttonAdd; break;
+    case Qt::Key_Minus: button = ui->buttonSubtract; break;
+    case Qt::Key_Asterisk: button = ui->buttonMultiply; break;
+    case Qt::Key_Slash: button = ui->buttonDivide; break;
+    case Qt::Key_Equal:
+    case Qt::Key_Enter:
+    case Qt::Key_Return: button = ui->buttonEquals; break;
+    case Qt::Key_Backspace: button = ui->buttonBackspace; break;
+    case Qt::Key_Delete: button = ui->buttonClearEntry; break;
+    case Qt::Key_Escape:
+    case Qt::Key_C: button = ui->buttonClear; break;
+    default:
+        QMainWindow::keyPressEvent(event);
+        return;
+    }
+
+    // Trigger the same clicked signal as a mouse press, including visual feedback.
+    button->animateClick();
+    event->accept();
 }
 
 void MainWindow::connectInputButtons()
