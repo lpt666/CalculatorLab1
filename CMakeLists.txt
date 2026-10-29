@@ -69,3 +69,28 @@ install(TARGETS CalculatorLab1
 if(QT_VERSION_MAJOR EQUAL 6)
     qt_finalize_executable(CalculatorLab1)
 endif()
+
+include(CTest)
+if(BUILD_TESTING)
+    find_package(Qt${QT_VERSION_MAJOR} REQUIRED COMPONENTS Test)
+
+    add_executable(CalculatorLab1Tests
+        tests/test_mainwindow.cpp
+        mainwindow.cpp
+        mainwindow.h
+        mainwindow.ui
+        resources.qrc
+    )
+    target_link_libraries(CalculatorLab1Tests PRIVATE
+        Qt${QT_VERSION_MAJOR}::Widgets
+        Qt${QT_VERSION_MAJOR}::Test
+    )
+    target_include_directories(CalculatorLab1Tests PRIVATE
+        ${CMAKE_CURRENT_SOURCE_DIR}
+    )
+
+    add_test(NAME calculator_tests COMMAND CalculatorLab1Tests)
+    set_tests_properties(calculator_tests PROPERTIES
+        ENVIRONMENT "QT_QPA_PLATFORM=offscreen"
+    )
+endif()

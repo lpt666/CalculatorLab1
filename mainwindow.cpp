@@ -58,8 +58,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         return;
     }
 
-    // Trigger the same clicked signal as a mouse press, including visual feedback.
-    button->animateClick();
+    // Emit the same clicked signal as the mouse path, synchronously preserving key order.
+    button->click();
     event->accept();
 }
 
