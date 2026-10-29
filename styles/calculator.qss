@@ -1,0 +1,79 @@
+QMainWindow {
+    background: #f4f5f7;
+}
+
+QLabel#expressionLabel {
+    color: #626a73;
+    font-size: 14px;
+    padding: 0 4px;
+}
+
+QLineEdit#displayEdit {
+    background: #ffffff;
+    color: #202124;
+    border: 1px solid #cfd4dc;
+    border-radius: 6px;
+    padding: 10px 12px;
+    selection-background-color: #0b57d0;
+}
+
+QPushButton {
+    min-height: 58px;
+    background: #ffffff;
+    color: #202124;
+    border: 1px solid #d8dce3;
+    border-radius: 6px;
+    font-size: 18px;
+    font-weight: 600;
+}
+
+QPushButton:hover {
+    background: #f0f2f5;
+    border-color: #aeb4be;
+}
+
+QPushButton:pressed {
+    background: #e3e6ea;
+}
+
+QPushButton#buttonAdd,
+QPushButton#buttonSubtract,
+QPushButton#buttonMultiply,
+QPushButton#buttonDivide {
+    background: #e8f1fb;
+    color: #0b57d0;
+    border-color: #c7daf2;
+}
+
+QPushButton#buttonAdd:hover,
+QPushButton#buttonSubtract:hover,
+QPushButton#buttonMultiply:hover,
+QPushButton#buttonDivide:hover {
+    background: #d9e9f9;
+}
+
+QPushButton#buttonClear,
+QPushButton#buttonClearEntry {
+    background: #fce8e6;
+    color: #b3261e;
+    border-color: #f4c7c3;
+}
+
+QPushButton#buttonClear:hover,
+QPushButton#buttonClearEntry:hover {
+    background: #f9d8d5;
+}
+
+QPushButton#buttonEquals {
+    background: #0b57d0;
+    color: #ffffff;
+    border-color: #0b57d0;
+}
+
+QPushButton#buttonEquals:hover {
+    background: #0847aa;
+}
+
+QPushButton#buttonEquals:pressed {
+    background: #063b8f;
+}

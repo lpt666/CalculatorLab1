@@ -39,8 +39,10 @@ private:
     QString displayOperator(const QString &operation) const;
 
     Ui::MainWindow *ui;
+    // Completed value on the left side of the pending binary operation.
     double m_accumulator = 0.0;
     QString m_pendingOperator;
+    // These flags distinguish a fresh entry, a displayed result and an error.
     bool m_startNewEntry = true;
     bool m_resultDisplayed = false;
     bool m_errorState = false;

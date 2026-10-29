@@ -1,6 +1,7 @@
 #include "mainwindow.h"
 #include "./ui_mainwindow.h"
 
+#include <QFile>
 #include <QKeyEvent>
 #include <QPushButton>
 #include <cmath>
@@ -10,6 +11,12 @@ MainWindow::MainWindow(QWidget *parent)
     , ui(new Ui::MainWindow)
 {
     ui->setupUi(this);
+
+    QFile styleFile(":/styles/calculator.qss");
+    if (styleFile.open(QIODevice::ReadOnly | QIODevice::Text)) {
+        setStyleSheet(QString::fromUtf8(styleFile.readAll()));
+    }
+
     connectInputButtons();
     connectOperationButtons();
 }
