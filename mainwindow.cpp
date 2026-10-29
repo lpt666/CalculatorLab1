@@ -2,6 +2,7 @@
 #include "./ui_mainwindow.h"
 
 #include <QPushButton>
+#include <cmath>
 
 MainWindow::MainWindow(QWidget *parent)
     : QMainWindow(parent)
@@ -9,6 +10,7 @@ MainWindow::MainWindow(QWidget *parent)
 {
     ui->setupUi(this);
     connectInputButtons();
+    connectOperationButtons();
 }
 
 MainWindow::~MainWindow()
@@ -41,6 +43,12 @@ void MainWindow::inputDigit(const QString &digit)
     if (m_errorState) {
         clearAll();
     }
+    if (m_resultDisplayed) {
+        ui->expressionLabel->clear();
+        m_pendingOperator.clear();
+        m_resultDisplayed = false;
+        m_startNewEntry = true;
+    }
 
     QString text = ui->displayEdit->text();
     if (m_startNewEntry || text == "0") {
@@ -57,6 +65,12 @@ void MainWindow::inputDecimal()
 {
     if (m_errorState) {
         clearAll();
+    }
+    if (m_resultDisplayed) {
+        ui->expressionLabel->clear();
+        m_pendingOperator.clear();
+        m_resultDisplayed = false;
+        m_startNewEntry = true;
     }
 
     QString text = ui->displayEdit->text();
@@ -93,6 +107,7 @@ void MainWindow::clearEntry()
 {
     ui->displayEdit->setText("0");
     m_startNewEntry = true;
+    m_resultDisplayed = false;
     m_errorState = false;
 }
 
@@ -100,6 +115,8 @@ void MainWindow::clearAll()
 {
     clearEntry();
     ui->expressionLabel->clear();
+    m_accumulator = 0.0;
+    m_pendingOperator.clear();
 }
 
 void MainWindow::toggleSign()
@@ -121,4 +138,114 @@ void MainWindow::toggleSign()
     }
     ui->displayEdit->setText(text);
     m_startNewEntry = false;
+}
+
+void MainWindow::connectOperationButtons()
+{
+    connect(ui->buttonAdd, &QPushButton::clicked, this, [this] { selectOperator("+"); });
+    connect(ui->buttonSubtract, &QPushButton::clicked, this, [this] { selectOperator("-"); });
+    connect(ui->buttonMultiply, &QPushButton::clicked, this, [this] { selectOperator("*"); });
+    connect(ui->buttonDivide, &QPushButton::clicked, this, [this] { selectOperator("/"); });
+    connect(ui->buttonEquals, &QPushButton::clicked, this, &MainWindow::calculateResult);
+}
+
+void MainWindow::selectOperator(const QString &operation)
+{
+    if (m_errorState) {
+        return;
+    }
+
+    const double currentValue = ui->displayEdit->text().toDouble();
+    if (m_pendingOperator.isEmpty()) {
+        m_accumulator = currentValue;
+    } else if (!m_startNewEntry) {
+        if (!applyPendingOperation(currentValue)) {
+            return;
+        }
+    }
+
+    m_pendingOperator = operation;
+    ui->expressionLabel->setText(formatNumber(m_accumulator) + " "
+                                 + displayOperator(operation));
+    m_startNewEntry = true;
+    m_resultDisplayed = false;
+}
+
+void MainWindow::calculateResult()
+{
+    if (m_errorState || m_pendingOperator.isEmpty() || m_startNewEntry) {
+        return;
+    }
+
+    const double rightOperand = ui->displayEdit->text().toDouble();
+    const QString expression = formatNumber(m_accumulator) + " "
+                               + displayOperator(m_pendingOperator) + " "
+                               + formatNumber(rightOperand) + " =";
+    ui->expressionLabel->setText(expression);
+
+    if (!applyPendingOperation(rightOperand)) {
+        return;
+    }
+
+    m_pendingOperator.clear();
+    m_startNewEntry = true;
+    m_resultDisplayed = true;
+}
+
+bool MainWindow::applyPendingOperation(double rightOperand)
+{
+    double result = m_accumulator;
+    if (m_pendingOperator == "+") {
+        result += rightOperand;
+    } else if (m_pendingOperator == "-") {
+        result -= rightOperand;
+    } else if (m_pendingOperator == "*") {
+        result *= rightOperand;
+    } else if (m_pendingOperator == "/") {
+        if (std::abs(rightOperand) < 1e-15) {
+            showError("不能除以零");
+            return false;
+        }
+        result /= rightOperand;
+    }
+
+    if (!std::isfinite(result)) {
+        showError("结果超出范围");
+        return false;
+    }
+
+    m_accumulator = result;
+    ui->displayEdit->setText(formatNumber(result));
+    return true;
+}
+
+void MainWindow::showError(const QString &message)
+{
+    ui->displayEdit->setText(message);
+    m_pendingOperator.clear();
+    m_startNewEntry = true;
+    m_resultDisplayed = false;
+    m_errorState = true;
+}
+
+QString MainWindow::formatNumber(double value) const
+{
+    if (std::abs(value) < 1e-15) {
+        value = 0.0;
+    }
+    return QString::number(value, 'g', 15);
+}
+
+QString MainWindow::displayOperator(const QString &operation) const
+{
+    if (operation == "*") {
+        return "×";
+    }
+    if (operation == "/") {
+        return "÷";
+    }
+    if (operation == "-") {
+        return "−";
+    }
+    return operation;
 }

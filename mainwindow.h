@@ -25,9 +25,19 @@ private:
     void clearEntry();
     void clearAll();
     void toggleSign();
+    void connectOperationButtons();
+    void selectOperator(const QString &operation);
+    void calculateResult();
+    bool applyPendingOperation(double rightOperand);
+    void showError(const QString &message);
+    QString formatNumber(double value) const;
+    QString displayOperator(const QString &operation) const;
 
     Ui::MainWindow *ui;
+    double m_accumulator = 0.0;
+    QString m_pendingOperator;
     bool m_startNewEntry = true;
+    bool m_resultDisplayed = false;
     bool m_errorState = false;
 };
 #endif // MAINWINDOW_H
