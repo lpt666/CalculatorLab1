@@ -1,0 +1,14 @@
+build/
+build-*/
+.qtcreator/
+*.user
+*.user.*
+.qtc_clangd/
+.cache/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+*.autosave
+*.tmp
+*.bak
